@@ -1,0 +1,37 @@
+@css
+body {
+  background-color: #141414;
+}
+
+.card-body {
+  background-size: cover;
+  background-position: center;
+}
+
+.card-body:before {
+  content: "";
+  background-image: linear-gradient(to bottom,rgba(0, 0, 0, 0), rgba(0,0,0,0.5) 80%);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+@end
+
+const data = fetch("https://wttr.in/karamay?format=j1")
+
+div.container > div.row.vh-100 > div.col-lg-2.mx-auto.align-self-center
+  div.card.rounded-5.overflow-hidden > div.card-body.p-4.position-relative
+      style="background-image: url(https://images.pexels.com/photos/12115606/pexels-photo-12115606.jpeg)"
+    div.position-relative
+      if $data["status"] == 200:
+        const currCond = $data["json"]["current_condition"][0]
+        h1.h4: "Karamay"
+          span.h5.text-light.d-block: "China"
+        h2.h1.fw-bold: $currCond["temp_C"] & "°"
+        p.text-muted: $currCond["weatherDesc"][0]["value"]
+      else:
+        span.placeholder.col-7
+        div > span.placeholder.col-4
+        div.my-4 > span.h2.placeholder.col-5
