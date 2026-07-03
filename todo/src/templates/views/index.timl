@@ -1,0 +1,105 @@
+@css
+body {
+  background-color: #141414;
+}
+.todo-input:focus {
+  box-shadow: none;
+  border-color: #6c5ce7;
+}
+.todo-item.done .todo-text {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+.todo-count {
+  font-size: 0.85rem;
+}
+@end
+
+div.container.py-5 > div.row > div.col-lg-5.mx-auto
+  div.card.rounded-5 > div.card-body.p-5
+    h1.h2.mb-4.fw-bold: "Todo list"
+    div.input-group.mb-4
+      input#todoInput.form-control.todo-input.rounded-start-3
+        placeholder="Add a new "
+        onkeydown="if(event.key==='Enter') addTodo()"
+      button.btn.px-4.btn-danger.rounded-end-3 onclick="addTodo()"
+        i.bi.bi-plus-lg
+
+    ul#todoList.list-group.rounded-3
+
+    div#emptyState.text-center.py-5 style="display: none"
+      i.bi.bi-inbox.text-secondary style="font-size: 3rem"
+      p.text-secondary.mt-2: "No tasks yet. Add one above!"
+
+  div.d-flex.justify-content-between.align-items-center.mt-3.px-1
+    span#todoCount.todo-count.text-secondary: "0 items"
+    button.btn.btn-sm.px-3 onclick="clearDone()": "Clear list"
+
+@javascript
+let todos = [
+  { id: 1, text: "Learn Tim Engine", done: true },
+  { id: 2, text: "Build something awesome", done: false },
+  { id: 3, text: "Deploy to production", done: false },
+];
+
+function render() {
+  const list = document.getElementById("todoList");
+  const empty = document.getElementById("emptyState");
+  const count = document.getElementById("todoCount");
+  const pending = todos.filter(t => !t.done).length;
+
+  if (todos.length === 0) {
+    list.innerHTML = "";
+    empty.style.display = "block";
+    count.textContent = "0 items";
+    return;
+  }
+  empty.style.display = "none";
+  count.textContent = pending + " item" + (pending !== 1 ? "s" : "") + " left";
+
+  list.innerHTML = todos.map(t => `
+    <li class="todo-item list-group-item list-group-item-action ${t.done ? 'done' : ''}">
+      <input class="form-check-input m-0" type="checkbox"
+        style="width: 1.2rem; height: 1.2rem; cursor: pointer"
+        ${t.done ? 'checked' : ''}
+        onchange="toggleTodo(${t.id})">
+      <span class="todo-text flex-grow-1">${escHtml(t.text)}</span>
+      <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteTodo(${t.id})">
+        <i class="bi bi-trash"></i>
+      </button>
+    </li>
+  `).join("");
+}
+
+function addTodo() {
+  const input = document.getElementById("todoInput");
+  const text = input.value.trim();
+  if (!text) return;
+  todos.push({ id: Date.now(), text, done: false });
+  input.value = "";
+  render();
+}
+
+function toggleTodo(id) {
+  const t = todos.find(t => t.id === id);
+  if (t) { t.done = !t.done; render(); }
+}
+
+function deleteTodo(id) {
+  todos = todos.filter(t => t.id !== id);
+  render();
+}
+
+function clearDone() {
+  todos = todos.filter(t => !t.done);
+  render();
+}
+
+function escHtml(s) {
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+render();
+@end
